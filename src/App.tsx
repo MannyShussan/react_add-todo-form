@@ -3,7 +3,7 @@ import './App.scss';
 import usersFromServer from './api/users';
 import todosFromServer from './api/todos';
 import { TodoList } from './components/TodoList';
-import { useState } from 'react';
+import { FormEvent, useState } from 'react';
 
 const findUserById = (userId: number) => {
   return usersFromServer.find(u => u.id === userId);
@@ -58,6 +58,19 @@ export const App = () => {
     setError(false);
   };
 
+  const onSubmitHandler = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!title || !chosenUser) {
+      setError(true);
+
+      return;
+    }
+
+    addTodo();
+    reset();
+  };
+
   return (
     <div className="App">
       <h1>Add todo form</h1>
@@ -65,18 +78,7 @@ export const App = () => {
       <form
         action="/api/todos"
         method="POST"
-        onSubmit={e => {
-          e.preventDefault();
-
-          if (!title || !chosenUser) {
-            setError(true);
-
-            return;
-          }
-
-          addTodo();
-          reset();
-        }}
+        onSubmit={event => onSubmitHandler(event)}
       >
         <div className="field">
           <label htmlFor="title">
